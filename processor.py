@@ -12,25 +12,28 @@ for csvfile in files:
     with open(csvfile) as csv_file:
         processedLines = []
         try:
-            csv_reader = csv.reader(csv_file, delimiter=';')
+            csv_reader = csv.reader(csv_file, delimiter='\t')
             line_count = 0
             for row in csv_reader:
                 if line_count == 0:
                     var = "Column names are {}".format(row)
                     print(var)
                     line_count += 1
+                    continue
                 else:
                     print("Processing ...")
+                    print(row)
+                    
                     #time.sleep(3)
                     if row[2] is not None:
                         processed = postgres_client.create_entry(row)
-                        processedLines.append(processed)
                         print("Processed :  {} ".format(processed))
                         #print('\t{row[0]} works in the {row[1]} department, and was born in {row[2]}.')
                         line_count += 1
         except csv.Error as ce:
             print('Exception importing {} : {} in Line : {}'.format(
                 csvfile, str(e), line_count + 1))
+            sys.exit()
             #actual_date = datetime.datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
             #csvfilename = os.path.basename(csvfile).replace(
             #    '.csv', '.{}.csv'.format(actual_date))
@@ -44,6 +47,7 @@ for csvfile in files:
         except Exception as e:
             print('Exception importing {} : {} in Line : {}'.format(
                 csvfile, str(e), line_count + 1))
+            sys.exit()
             #actual_date = datetime.datetime.now().strftime("%d.%m.%Y-%H:%M:%S")
             #csvfilename = os.path.basename(csvfile).replace(
             #    '.csv', '.{}.csv'.format(actual_date))
